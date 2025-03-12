@@ -1,0 +1,56 @@
+const puppeteer = require("puppeteer");
+require("dotenv").config();
+
+// Function to generate random delay (between 3-10 seconds)
+function getRandomDelay(min = 3000, max = 10000) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+(async () => {
+    const browser = await puppeteer.launch({
+        headless: true, // Runs in background (no UI)
+        args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    });
+    const page = await browser.newPage();
+
+    // Open the chat app
+    await page.goto(process.env.KLOK_URL, { waitUntil: "networkidle2" });
+
+    // Inject session token for login
+    await page.evaluate((token) => {
+        localStorage.setItem("session_token", token);
+    }, process.env.SESSION_TOKEN);
+
+    await page.reload();
+    console.log("Logged in!");
+
+    // List of automated messages
+    const messages = [
+        "Hello Web3!",
+        "Automated chat message.",
+        "Earning points with AI!",
+        "Web3 is the future!",
+        "How’s everyone doing today?",
+    ];
+
+    let index = 0;
+
+    while (true) {
+        try {
+            // Type and send a message
+            await page.type(".chat-input", messages[index]);
+            await page.keyboard.press("Enter");
+            console.log(`Sent message: ${messages[index]}`);
+
+            index = (index + 1) % messages.length;
+
+            // Wait for a random delay before sending the next message
+            const delay = getRandomDelay();
+            console.log(`Waiting ${delay / 1000} seconds...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+
+        } catch (err) {
+            console.error("Error sending message:", err);
+        }
+    }
+})();
