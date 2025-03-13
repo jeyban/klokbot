@@ -144,7 +144,7 @@ function getRandomDelay(min = 3000, max = 10000) {
 ];
 
     ];
-
+];
     let index = 0;
 
     while (true) {
