@@ -1,22 +1,22 @@
 const puppeteer = require("puppeteer");
 require("dotenv").config();
 
-// Function to generate random delay (between 3-10 seconds)
+// Function to generate random delay (3-10 sec)
 function getRandomDelay(min = 3000, max = 10000) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 (async () => {
     const browser = await puppeteer.launch({
-        headless: true, // Runs in background (no UI)
+        executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', // Update with your Chrome path
+        headless: false, // Change to 'true' if you want to run it in the background
         args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
-    const page = await browser.newPage();
 
-    // Open the chat app
+    const page = await browser.newPage();
     await page.goto(process.env.KLOK_URL, { waitUntil: "networkidle2" });
 
-    // Inject session token for login
+    // Set session token in localStorage
     await page.evaluate((token) => {
         localStorage.setItem("session_token", token);
     }, process.env.SESSION_TOKEN);
@@ -24,27 +24,136 @@ function getRandomDelay(min = 3000, max = 10000) {
     await page.reload();
     console.log("Logged in!");
 
-    // List of automated messages
     const messages = [
-        "Hello Web3!",
-        "Automated chat message.",
-        "Earning points with AI!",
-        "Web3 is the future!",
-        "How’s everyone doing today?",
+    "Hello Web3!",
+    "Earning points with AI!",
+    "Web3 is the future!",
+    "Let's talk crypto!",
+    "How's everyone doing today?",
+    "What is Web3?",
+    "How does Web3 differ from Web2?",
+    "What are the key principles of Web3?",
+    "What is decentralization in Web3?",
+    "Why is blockchain important for Web3?",
+    "What are some popular Web3 applications?",
+    "What is the role of cryptocurrencies in Web3?",
+    "How do wallets work in Web3?",
+    "What is the difference between custodial and non-custodial wallets?",
+    "What are private keys and public keys?",
+    "What is a blockchain?",
+    "How does a blockchain work?",
+    "What is a consensus mechanism?",
+    "What is proof of work (PoW)?",
+    "What is proof of stake (PoS)?",
+    "What are gas fees?",
+    "Why do blockchains need validators or miners?",
+    "What is the Ethereum Virtual Machine (EVM)?",
+    "What are smart contracts?",
+    "How do smart contracts work?",
+    "What programming languages are used for smart contracts?",
+    "What is Solidity?",
+    "What are decentralized applications (dApps)?",
+    "How are dApps different from traditional apps?",
+    "What are the most popular dApps?",
+    "What is Ethereum?",
+    "How does Ethereum differ from Bitcoin?",
+    "What is a Layer 2 solution?",
+    "What are rollups in Ethereum?",
+    "What is the difference between optimistic rollups and ZK-rollups?",
+    "What is a DAO (Decentralized Autonomous Organization)?",
+    "How do DAOs work?",
+    "What is a governance token?",
+    "What is DeFi (Decentralized Finance)?",
+    "How does DeFi differ from traditional finance?",
+    "What is a decentralized exchange (DEX)?",
+    "How do liquidity pools work?",
+    "What is yield farming?",
+    "What are stablecoins?",
+    "How do algorithmic stablecoins work?",
+    "What is staking in crypto?",
+    "How does slashing work in staking?",
+    "What is an NFT (Non-Fungible Token)?",
+    "How do NFTs work?",
+    "What are the most expensive NFTs ever sold?",
+    "What is an NFT marketplace?",
+    "What is minting an NFT?",
+    "What is the ERC-721 standard?",
+    "What is the ERC-1155 standard?",
+    "What is tokenization?",
+    "What is a token standard?",
+    "What is an ERC-20 token?",
+    "What is a meme coin?",
+    "What are some examples of meme coins?",
+    "What is the difference between a coin and a token?",
+    "What is the difference between fungible and non-fungible tokens?",
+    "What is a wrapped token?",
+    "What is a cross-chain bridge?",
+    "How do blockchain bridges work?",
+    "What are oracle networks in Web3?",
+    "What is Chainlink?",
+    "What is a rug pull in crypto?",
+    "What are common Web3 scams?",
+    "What is front-running in crypto?",
+    "What is an MEV bot?",
+    "How does a blockchain wallet work?",
+    "What is a seed phrase?",
+    "Why should you never share your private key?",
+    "How does two-factor authentication (2FA) work in Web3?",
+    "What is an airdrop in crypto?",
+    "What is a fork in blockchain?",
+    "What is the difference between a hard fork and a soft fork?",
+    "What is an altcoin?",
+    "What is an ICO (Initial Coin Offering)?",
+    "What is an IDO (Initial DEX Offering)?",
+    "What is a presale in crypto?",
+    "How does token vesting work?",
+    "What is an L1 blockchain?",
+    "What is an L2 blockchain?",
+    "What are zero-knowledge proofs?",
+    "What is zk-SNARKs?",
+    "What is zk-STARKs?",
+    "What is a blockchain explorer?",
+    "How do you check a transaction on Etherscan?",
+    "What is a gas limit?",
+    "What is a nonce in blockchain?",
+    "What is a Merkle tree in blockchain?",
+    "What is a hash function?",
+    "How does SHA-256 work?",
+    "What is the longest blockchain?",
+    "What is the Bitcoin halving event?",
+    "Why does Bitcoin have a fixed supply?",
+    "What is digital identity in Web3?",
+    "What is self-sovereign identity (SSI)?",
+    "What is Soulbound Tokens (SBTs)?",
+    "What is a DID (Decentralized Identifier)?",
+    "How does Web3 impact the metaverse?",
+    "What is play-to-earn (P2E)?",
+    "How do blockchain games work?",
+    "What are some popular blockchain games?",
+    "What is a smart contract audit?",
+    "Why do blockchain networks experience congestion?",
+    "What is an InterPlanetary File System (IPFS)?",
+    "How does Filecoin work?",
+    "What is Web3 storage?",
+    "What is a cryptographic signature?",
+    "How does multi-signature (multisig) work?",
+    "What are privacy coins?",
+    "What is a sidechain in blockchain?",
+    "What is a liquidity crisis in crypto?",
+    "What are the main risks of Web3?"
+];
+
     ];
 
     let index = 0;
 
     while (true) {
         try {
-            // Type and send a message
-            await page.type(".chat-input", messages[index]);
+            await page.type("textarea[name='message']", messages[index]);
             await page.keyboard.press("Enter");
             console.log(`Sent message: ${messages[index]}`);
 
             index = (index + 1) % messages.length;
-
-            // Wait for a random delay before sending the next message
             const delay = getRandomDelay();
             console.log(`Waiting ${delay / 1000} seconds...`);
             await new Promise(resolve => setTimeout(resolve, delay));
